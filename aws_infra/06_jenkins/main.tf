@@ -2,26 +2,33 @@ resource "aws_instance" "aws07_jenkins_server" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   key_name               = var.key_name
+  root_block_device {
+    volume_size = 25
+    volume_type = "gp3"
+    delete_on_termination = true # 인스턴스 삭제 시 볼륨도 삭제
+  }
   
   # network 모듈에서 생성한 NAT 게이트웨이와 연결된 Private Subnet 1번 사용
-  subnet_id              = data.aws_subnets.aws00_private_subnets.ids[0]
+  subnet_id              = data.aws_subnets.aws07_private_subnets.ids[0]
   
   # 프라이빗 망이므로 퍼블릭 IP는 할당하지 않음
   associate_public_ip_address = false
 
   vpc_security_group_ids = [
-    data.aws_security_group.aws00_ssh_sg.id, 
-    data.aws_security_group.aws00_http_sg.id
+    data.aws_security_group.aws07_ssh_sg.id, 
+    data.aws_security_group.aws07_http_sg.id
   ]
   
   # data.tf (33번 라인 부근)에 정의된 인스턴스 프로파일 참조
-  iam_instance_profile = data.aws_iam_instance_profile.aws00_ec2_profile.name
+  iam_instance_profile = data.aws_iam_instance_profile.aws07_ec2_profile.name
 
   user_data = <<-EOF
               #!/bin/bash
               # NAT 게이트웨이를 통해 외부와 통신하여 SSM 에이전트 활성화
               sudo systemctl enable amazon-ssm-agent
               sudo systemctl start amazon-ssm-agent
+
+              sudo apt install -y zip
 
               # 1. 호스트 OS용 Docker 설치
               ${file("${path.module}/user_data/install-docker.sh")}
