@@ -88,8 +88,8 @@ resource "aws_route_table_association" "aws07_private_rt_association" {
 # 6. Security Group 생성 - SSH-SG, HTTP-SG
 resource "aws_security_group" "aws07_ssh_sg" {
   name        = "${var.prefix}-ssh-sg"
-  description = "Allow SSH access"
   vpc_id      = aws_vpc.aws07_vpc.id
+
   ingress {
     from_port   = 22
     to_port     = 22
@@ -109,20 +109,8 @@ resource "aws_security_group" "aws07_ssh_sg" {
 
 resource "aws_security_group" "aws07_http_sg" {
   name        = "${var.prefix}-http-sg"
-  description = "Allow HTTP access"
   vpc_id      = aws_vpc.aws07_vpc.id
-  # ingress {
-  #   from_port = 80
-  #   to_port = 80
-  #   protocol = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
-  # ingress {
-  #   from_port = 443
-  #   to_port = 443
-  #   protocol = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+
   dynamic "ingress" {
     for_each = [80, 443]
     content {

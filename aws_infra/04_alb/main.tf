@@ -24,8 +24,8 @@ resource "aws_lb_target_group" "aws07_alb_was_group" {
     matcher             = "200"
     interval            = 30
     timeout             = 5
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
   }
   tags = {
     Name = "${var.prefix}-alb-was-group"
