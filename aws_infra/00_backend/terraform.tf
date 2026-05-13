@@ -1,4 +1,3 @@
-# aws_infra/asg/terraform.tf
 terraform {
   required_providers {
     aws = {
@@ -8,7 +7,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "aws07-terraform-state-bucket"
-    key            = "asg/terraform.tfstate"
+    key            = "s3/terraform.tfstate"
     region         = "ap-northeast-2"
     dynamodb_table = "aws07-terraform-locks"
     encrypt        = true

@@ -4,10 +4,10 @@ resource "aws_instance" "aws07_instance" {
   instance_type               = var.instance_type
   associate_public_ip_address = true
   key_name                    = var.key_name
-  subnet_id                   = data.aws_subnet.aws07_public_subnet.id
+  subnet_id                   = data.terraform_remote_state.network.outputs.public_subnet_ids[0]
   security_groups = [
-    data.aws_security_group.aws07_ssh_sg.id,
-    data.aws_security_group.aws07_http_sg.id
+    data.terraform_remote_state.network.outputs.ssh_sg_id,
+    data.terraform_remote_state.network.outputs.http_sg_id
   ]
 
   # CodeDepoloy Agent, Docker 설치
@@ -34,7 +34,7 @@ resource "aws_instance" "aws07_instance" {
 # 2. Codedeploy Agent, Docker 설치 대기 
 resource "null_resource" "aws07_delay" {
   provisioner "local-exec" {
-    command = "sleep 300"
+    command = "sleep 180"
   }
   depends_on = [aws_instance.aws07_instance]
 }
