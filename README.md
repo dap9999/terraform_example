@@ -1,3 +1,3 @@
 # terraform_example
 
-Terraform Backend Example
+Terraform Modules Example
